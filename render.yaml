@@ -1,0 +1,41 @@
+# Blueprint do Render: cria o banco PostgreSQL e a API de uma vez,
+# ligando os dois sem precisar copiar host, usuario ou senha.
+databases:
+  - name: crud-produtos-db
+    databaseName: produtos
+    user: produtos
+    plan: free
+    region: ohio
+
+services:
+  - type: web
+    name: crud-produtos-api
+    runtime: docker
+    plan: free
+    region: ohio
+    branch: main
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: render
+      - key: CORS_ORIGINS
+        value: "*"
+      - key: DB_HOST
+        fromDatabase:
+          name: crud-produtos-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: crud-produtos-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: crud-produtos-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: crud-produtos-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: crud-produtos-db
+          property: password
